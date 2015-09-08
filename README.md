@@ -4,4 +4,4 @@ Utility to transform relational spatial datasets to linked data spatial datasets
 
 To run
 
-./app.js -o test.ttl test/assets/world_cities.shp
+./spatial-ld.js -o test.ttl test/assets/world_cities.shp
