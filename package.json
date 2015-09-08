@@ -1,0 +1,28 @@
+{
+  "name": "spatial-ld",
+  "version": "1.0.0",
+  "description": "Utility to transform relational spatial datasets to linked data spatial datasets",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "commander": "^2.8.1",
+    "gdal": "^0.7.1",
+    "n3": "^0.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infitude/spatial-ld.git"
+  },
+  "author": "Peter Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/infitude/spatial-ld/issues"
+  },
+  "homepage": "https://github.com/infitude/spatial-ld#readme"
+}
