@@ -71,7 +71,7 @@ if(!program.args.length) {
             // create json record
             var jsonSubject = ns + feature.fields.get(0);            
             var jsonPredicate = geo + 'hasGeometry';
-            var jsonObject = geo + jsonSubject + 'Geom';
+            var jsonObject = ns + feature.fields.get(0) + 'Geom';
 
             // get geometry
             var wkt = feature.getGeometry().toWKT();
