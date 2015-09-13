@@ -10,12 +10,20 @@ var NS_GEOSPARQL = 'http://www.opengis.net/ont/geosparql#';
 
 program
     .version('0.0.1')
-    .usage('[options] <shapefile>')
-    .option('-o, --output [filename]', 'File name', 'output.ttl')
-    .option('-i, --info', 'Output info')
-    .option('-n, --index [column]', 'index')
-    .option('-g, --gdal', 'GDAL version and driver info')
-    .parse(process.argv);
+//    .usage('[options] <shapefile>')
+    .usage('[options]')
+    .option('-o, --output [filename]', 'file name', 'output.ttl')
+    .option('-i, --info', 'display shapefile infomation')
+    .option('-n, --index [column]', 'create a non-spatial index on the column specified')
+
+program.on('--help', function(){
+        console.log("gdal version: " + gdal.version);
+//        gdal.drivers.forEach(function(driver) {
+//          console.log("gdal driver: " + driver.description);
+//        });    
+})
+
+program.parse(process.argv);
 
 if(!program.args.length) {
     program.help();
@@ -35,12 +43,7 @@ if(!program.args.length) {
         console.log("number of features: " + layer.features.count());
         console.log("fields: " + layer.fields.getNames());
         console.log("extent: " + JSON.stringify(layer.extent));
-        console.log("srs: " + (layer.srs ? layer.srs.toWKT() : 'null'));        
-    } else if(program.gdal) {
-        console.log("gdal version: " + gdal.version);
-        gdal.drivers.forEach(function(driver) {
-          console.log("gdal driver: " + driver.description);
-        });
+        console.log("srs: " + (layer.srs ? layer.srs.toWKT() : 'null'));           
     } else if(program.index) {
         var index = ['CREATE INDEX ON', layer.name, 'USING', program.index].join(' ');
         //dataset.executeSQL(index);
