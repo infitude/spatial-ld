@@ -64,7 +64,9 @@ if(!program.args.length) {
         wstream.write("@prefix xml: <http://www.w3.org/XML/1998/namespace> .\n");
         wstream.write("@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n");
         wstream.write("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
-        wstream.write("@base <http://www.w3.org/2002/07/owl#> .\n");
+        wstream.write("@base @base <http://" + layer.name + ".linked-data.io> . .\n");
+        
+        wstream.write("<http://" + layer.name + ".linked-data.io> rdf:type owl:Ontology .");
         
         // write annotation properties 
         wstream.write("geo:hasGeometry rdf:type owl:AnnotationProperty .\n");
@@ -93,7 +95,7 @@ if(!program.args.length) {
 
             // write feature
             var featureSubject = 'ld:' + feature.fields.get(0);            
-            wstream.write([featureSubject, 'rdf:type', 'ld:' + layer.name, ', owl:NamedIndividual' ].join(' '));
+            wstream.write(["<http://" + layer.name + ".linked-data.io#" + feature.fields.get(0) + ">", 'rdf:type', 'ld:' + layer.name, ', owl:NamedIndividual' ].join(' '));
     
             // write attributes
             feature.fields.forEach(function(value, key) {
@@ -102,19 +104,19 @@ if(!program.args.length) {
                                predicate: 'ld:' + key, 
 //                               object: N3Util.createLiteral( value ) };
                                object: ['"', value, '"' ].join('')  };
-                wstream.write([triple.predicate, triple.object].join(' '));
+                wstream.write([' ', triple.predicate, triple.object].join(' '));
             });
 
             // write geometry
-            wstream.write(';\n geo:hasGeometry ' + featureSubject + 'Geom .\n');     
+            wstream.write(';\n  geo:hasGeometry ' + "<http://" + layer.name + ".linked-data.io#" + feature.fields.get(0) + "Geom>" + ' .\n');     
             var wkt = feature.getGeometry().toWKT();
             var wkt_dp = wkt.replace(/([0-9]+\.[0-9]{5})([0-9]+)/g, '$1');      // truncate decimal places in coordinates 
-            wstream.write(featureSubject + 'Geom rdf:type sf:Polygon , owl:NamedIndividual ; \n');                
+            wstream.write("<http://" + layer.name + ".linked-data.io#" + feature.fields.get(0) + "Geom>" + ' rdf:type sf:Polygon , owl:NamedIndividual ; \n');                
             var spatialTriple = { subject: featureSubject, 
                                   predicate: 'geo:asWKT', 
                                   //object: '"' + wkt_dp + '"^^geo:wktLiteral'  };
                                   object: '"' + wkt_dp + '"'  };
-            wstream.write([spatialTriple.predicate, spatialTriple.object, ' . \n'].join(' '));
+            wstream.write([' ', spatialTriple.predicate, spatialTriple.object, ' . \n'].join(' '));
         });
         wstream.end();
     }
