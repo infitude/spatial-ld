@@ -12,7 +12,7 @@ program
     .version('0.0.1')
 //    .usage('[options] <shapefile>')
     .usage('[options]')
-    .option('-o, --output [filename]', 'file name', 'output.ttl')
+    .option('-o, --output [filename]', 'file name', 'output.sdx')
     .option('-i, --info', 'display shapefile infomation')
     .option('-n, --index [column]', 'create a non-spatial index on the column specified')
 
@@ -56,8 +56,6 @@ if(!program.args.length) {
         var wstream = fs.createWriteStream(program.output);
 
         // write namespaces
-//        wstream.write("@prefix ld: <http://" + layer.name + ".linked-data.io#> .\n");
-//        wstream.write("@prefix geo: <http://www.opengis.net/ont/geosparql#> .\n");
         var ns = 'http://' + layer.name + '.linked-data.io#';
         var geo = 'http://www.opengis.net/ont/geosparql#';
 
@@ -74,16 +72,15 @@ if(!program.args.length) {
             var jsonObject = ns + feature.fields.get(0) + 'Geom';
 
             // get geometry
-            var wkt = feature.getGeometry().toWKT();
-            var wkt_dp = wkt.replace(/([0-9]+\.[0-9]{5})([0-9]+)/g, '$1');      // truncate decimal places in coordinates 
+            var geom = feature.getGeometry();
+            var env = geom.getEnvelope();
+            var item = [env.minX, env.minY, env.maxX, env.maxY, {subject: jsonSubject, object: jsonObject}];
+            var json = JSON.stringify(item);
+            json = json.replace(/([0-9]+\.[0-9]{5})([0-9]+)/g, '$1');
+            wstream.write([json, ','].join(''));
 
-            var spatialJSON = { subject: jsonSubject, 
-                                  predicate: jsonPredicate,
-                                  object: jsonObject, 
-                                  geometry: wkt_dp };
-            wstream.write([JSON.stringify(spatialJSON), ','].join(''));
         });
-        wstream.write('{}]');
+        wstream.write(']');
         wstream.end();
     }
 }
